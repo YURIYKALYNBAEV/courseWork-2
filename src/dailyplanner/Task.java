@@ -6,26 +6,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public abstract class Task implements Repeatable {
+public abstract class Task {
     private static int idGenerator = 1;
     private String title;
     private final int id;
     private LocalDateTime dateTime;
     private String description;
     private Type type;
-    private Repeatability repeatability;
-
 
     public Task(String title,
                 LocalDateTime dateTime,
                 String description,
-                Type type,
-                Repeatability repeatability) throws IncorrectArgumentException {
+                Type type) throws IncorrectArgumentException {
         setTitle(title);
         setType(type);
         setDescription(description);
         setDateTime(dateTime);
-        setRepeatability(repeatability);
         this.id = idGenerator++;
     }
 
@@ -81,18 +77,6 @@ public abstract class Task implements Repeatable {
         }
     }
 
-    public Repeatability getRepeatability() {
-        return repeatability;
-    }
-
-    public void setRepeatability(Repeatability repeatability) throws IncorrectArgumentException {
-        if (repeatability != null) {
-            this.repeatability = repeatability;
-        } else {
-            throw new IncorrectArgumentException("повторяемость задачи");
-        }
-    }
-
     public abstract boolean appearsIn(LocalDate localDate);
 
     @Override
@@ -100,12 +84,12 @@ public abstract class Task implements Repeatable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(title, task.title) && Objects.equals(dateTime, task.dateTime) && Objects.equals(description, task.description) && type == task.type && repeatability == task.repeatability;
+        return id == task.id && Objects.equals(title, task.title) && Objects.equals(dateTime, task.dateTime) && Objects.equals(description, task.description) && type == task.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, id, dateTime, description, type, repeatability);
+        return Objects.hash(title, id, dateTime, description, type);
     }
 
     @Override
@@ -115,7 +99,6 @@ public abstract class Task implements Repeatable {
                 ", идентификатор " + id +
                 ", дата и время " + dateTime +
                 ", описание " + description + '\'' +
-                ", тип " + type +
-                ", повторяемость " + repeatability;
+                ", тип " + type;
     }
 }

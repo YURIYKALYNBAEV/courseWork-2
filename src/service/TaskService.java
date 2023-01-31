@@ -16,7 +16,7 @@ public class TaskService {
     }
 
     public Task updateTitle(int id, String title) throws TaskNotFoundException, IncorrectArgumentException {
-        if (!taskMap.containsKey(id) || taskMap.get(id) == null) {
+        if (!taskMap.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
         taskMap.get(id).setDescription(title);
@@ -24,7 +24,7 @@ public class TaskService {
     }
 
     public Task updateDescription(int id, String description) throws TaskNotFoundException, IncorrectArgumentException {
-        if (!taskMap.containsKey(id) || taskMap.get(id) == null) {
+        if (!taskMap.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
         taskMap.get(id).setDescription(description);
@@ -36,7 +36,7 @@ public class TaskService {
     }
 
     public Task remove(int id) throws TaskNotFoundException {
-        if (!taskMap.containsKey(id) || taskMap.get(id) == null) {
+        if (!taskMap.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
         Task task = taskMap.get(id);
@@ -49,10 +49,7 @@ public class TaskService {
         Collection<Task> collection = new ArrayList<>();
         for (Map.Entry<Integer, Task> entry : taskMap.entrySet()
         ) {
-            if (entry.getValue() != null &&
-                    (entry.getValue().getDateTime().toLocalDate().equals(localDate)) ||
-                    entry.getValue().appearsIn(localDate)
-            ) {
+            if (entry.getValue().appearsIn(localDate)) {
                 collection.add(entry.getValue());
             }
         }
@@ -63,14 +60,11 @@ public class TaskService {
         Map<LocalDate, List<Task>> resultMap = new TreeMap<>();
         for (Map.Entry<Integer, Task> entry : taskMap.entrySet()
         ) {
-            if (entry.getValue() != null) {
-                LocalDate localDate = entry.getValue().getDateTime().toLocalDate();
-                if (!resultMap.containsKey(localDate)) {
-                    resultMap.put(localDate, new LinkedList<>());
-                }
-                resultMap.get(localDate).add(entry.getValue());
+            LocalDate localDate = entry.getValue().getDateTime().toLocalDate();
+            if (!resultMap.containsKey(localDate)) {
+                resultMap.put(localDate, new LinkedList<>());
             }
-
+            resultMap.get(localDate).add(entry.getValue());
         }
         return resultMap;
     }
