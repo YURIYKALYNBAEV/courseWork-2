@@ -143,6 +143,7 @@ public class Menu {
         if (task != null) {
             taskService.add(task);
             System.out.println("Задача добавлена");
+            System.out.println();
         } else {
             System.out.println("Введены некорректные данные по задаче!");
         }
@@ -154,6 +155,7 @@ public class Menu {
         try {
             taskService.remove(id);
             System.out.println("Задача удалена");
+            System.out.println();
         } catch (TaskNotFoundException e) {
             System.out.println(e.getMessage());
         }
@@ -175,12 +177,10 @@ public class Menu {
             System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
             console.close();
         }
+        System.out.println();
         if (localDate == null) {
             System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
             console.close();
         }
-
     }
-
-
 }

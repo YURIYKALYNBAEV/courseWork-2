@@ -16,8 +16,7 @@ public class OneTimeTask extends Task {
 
     @Override
     public boolean appearsIn(LocalDate localDate) {
-        return (this.getDateTime().toLocalDate().isBefore(localDate) ||
-                this.getDateTime().toLocalDate().isEqual(localDate));
+        return true;
     }
 }
 
