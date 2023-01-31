@@ -9,8 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Menu {
@@ -29,10 +28,15 @@ public class Menu {
     }
 
     public void printMenu() {
-        System.out.println("1. Добавить задачу\n" +
-                "2. Удалить задачу\n" +
-                "3. Получить задачи на день\n" +
-                "0. Выход");
+        System.out.println(
+                "1. Добавить задачу\n" +
+                        "2. Удалить задачу по id\n" +
+                        "3. Получить задачи на день\n" +
+                        "4. Изменить заголовок задачи\n" +
+                        "5. Изменить описание задачи\n" +
+                        "6. Сгруппировать задачи по дате\n" +
+                        "7. Вывести удаленные задачи\n" +
+                        "0. Выход");
     }
 
     public void startMenu() {
@@ -50,11 +54,23 @@ public class Menu {
                         case 1: // Добавить задачу
                             addTask(console);
                             break;
-                        case 2: // Удалить задачу
+                        case 2: // Удалить задачу по id
                             deleteTask(console);
                             break;
                         case 3: // Получить задачи на день
                             printTasksByDay(console);
+                            break;
+                        case 4: // Изменить заголовок задачи
+                            updateTitle(console);
+                            break;
+                        case 5: // Изменить описание задачи
+                            updateDescription(console);
+                            break;
+                        case 6: // Сгруппировать задачи по дате
+                            printAllGroupByDate();
+                            break;
+                        case 7: // Вывести удаленные задачи
+                            printRemovedTasks();
                             break;
                     }
                 } else {
@@ -177,10 +193,57 @@ public class Menu {
             System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
             console.close();
         }
-        System.out.println();
-        if (localDate == null) {
-            System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
-            console.close();
+    }
+
+    private void updateTitle(Scanner console) {
+        printAllGroupByDate();
+        System.out.println("Введите id редактируемой задачи: ");
+        int id = console.nextInt();
+        try {
+            System.out.println("Текущий заголовок: " +
+                    taskService.getTaskById(id).getTitle());
+            System.out.println("Введите новый заголовок: ");
+            Scanner scanner = new Scanner(System.in);
+            String title = scanner.next();
+            Task task = taskService.updateTitle(id, title);
+            System.out.println(task);
+        } catch (TaskNotFoundException | IncorrectArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void updateDescription(Scanner console) {
+        printAllGroupByDate();
+        System.out.println("Введите id редактируемой задачи: ");
+        int id = console.nextInt();
+        try {
+            System.out.println("Текущее описание: " +
+                    taskService.getTaskById(id).getDescription());
+            System.out.println("Введите новое описание: ");
+            Scanner scanner = new Scanner(System.in);
+            String description = scanner.next();
+            Task task = taskService.updateDescription(id, description);
+            System.out.println(task);
+        } catch (TaskNotFoundException | IncorrectArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void printAllGroupByDate() {
+//        LocalDate localDate = null;
+//        if (console.hasNext(DATE_PATTERN)) {
+//            String taskDate = console.next(DATE_PATTERN);
+//            localDate = LocalDate.parse(taskDate, DATE_FORMATTER);
+        Map<LocalDate, List<Task>> tasksAllGroupByDay = taskService.getAllGroupByDate();
+        System.out.println(tasksAllGroupByDay);
+//        }
+    }
+
+    private void printRemovedTasks() {
+        List<Task> removedTasks = taskService.getRemovedTasks();
+        for (Task removedTask : removedTasks
+        ) {
+            System.out.println(removedTask);
         }
     }
 }

@@ -19,7 +19,7 @@ public class TaskService {
         if (!taskMap.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
-        taskMap.get(id).setDescription(title);
+        taskMap.get(id).setTitle(title);
         return taskMap.get(id);
     }
 
@@ -68,4 +68,9 @@ public class TaskService {
         }
         return resultMap;
     }
+
+    public Task getTaskById(int id) {
+        return taskMap.get(id);
+    }
+
 }
