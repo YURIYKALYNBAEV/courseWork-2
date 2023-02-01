@@ -5,7 +5,6 @@ import exception.IncorrectArgumentException;
 import exception.TaskNotFoundException;
 import service.TaskService;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,10 +15,10 @@ public class Menu {
     private final TaskService taskService;
     private final Scanner console;
     private boolean isExit; // false - выходим из цикла
-    private final Pattern DATE_TIME_PATTERN = Pattern.compile("\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}\\:\\d{2}");
-    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-    private final Pattern DATE_PATTERN = Pattern.compile("\\d{2}\\.\\d{2}\\.\\d{4}");
-    private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final Pattern dateTimePattern = Pattern.compile("\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}\\:\\d{2}");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private final Pattern datePattern = Pattern.compile("\\d{2}\\.\\d{2}\\.\\d{4}");
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     public Menu(TaskService taskService) {
         this.taskService = taskService;
@@ -90,14 +89,12 @@ public class Menu {
         String title = console.next();
         if (title.isBlank()) {
             System.out.println("Небходимо ввести название задачи!");
-            console.close();
         }
 
         System.out.print("Введите описание задачи: ");
         String description = console.next();
         if (description.isBlank()) {
             System.out.println("Небходимо ввести описание задачи!");
-            console.close();
         }
 
         System.out.print("Введите тип задачи (1-личная, 2-рабочая): ");
@@ -110,20 +107,17 @@ public class Menu {
             type = Type.WORK;
         } else {
             System.out.println("Тип задачи введен некорректно!");
-            console.close();
         }
         System.out.println("Введите дату и время задачи в формате dd.MM.yyyy HH:mm");
         LocalDateTime dateTime = null;
-        if (console.hasNext(DATE_TIME_PATTERN)) {
-            String taskTime = console.next(DATE_TIME_PATTERN);
-            dateTime = LocalDateTime.parse(taskTime, DATE_TIME_FORMATTER);
+        if (console.hasNext(dateTimePattern)) {
+            String taskTime = console.next(dateTimePattern);
+            dateTime = LocalDateTime.parse(taskTime, dateTimeFormatter);
         } else {
             System.out.println("Введите дату и время задачи в формате dd.MM.yyyy HH:mm");
-            console.close();
         }
         if (dateTime == null) {
             System.out.println("Введите дату и время задачи в формате dd.MM.yyyy HH:mm");
-            console.close();
         }
         System.out.println("Введите повторяемость задачи (" +
                 "1 - однократная," +
@@ -153,7 +147,6 @@ public class Menu {
                     break;
                 default:
                     System.out.println("Повторяемость задачи введена некорректно");
-                    console.close();
             }
         }
         if (task != null) {
@@ -180,9 +173,9 @@ public class Menu {
     private void printTasksByDay(Scanner console) {
         System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
         LocalDate localDate = null;
-        if (console.hasNext(DATE_PATTERN)) {
-            String taskDate = console.next(DATE_PATTERN);
-            localDate = LocalDate.parse(taskDate, DATE_FORMATTER);
+        if (console.hasNext(datePattern)) {
+            String taskDate = console.next(datePattern);
+            localDate = LocalDate.parse(taskDate, dateFormatter);
 
             Collection<Task> tasksByDay = taskService.getAllByDate(localDate);
 
@@ -191,8 +184,11 @@ public class Menu {
             }
         } else {
             System.out.println("Введите дату задачи в формате dd.MM.yyyy: ");
-            console.close();
         }
+        if (localDate == null) {
+            System.out.println("Введите дату задачи в формате dd.MM.yyyy");
+        }
+
     }
 
     private void updateTitle(Scanner console) {
@@ -230,13 +226,8 @@ public class Menu {
     }
 
     private void printAllGroupByDate() {
-//        LocalDate localDate = null;
-//        if (console.hasNext(DATE_PATTERN)) {
-//            String taskDate = console.next(DATE_PATTERN);
-//            localDate = LocalDate.parse(taskDate, DATE_FORMATTER);
         Map<LocalDate, List<Task>> tasksAllGroupByDay = taskService.getAllGroupByDate();
         System.out.println(tasksAllGroupByDay);
-//        }
     }
 
     private void printRemovedTasks() {
